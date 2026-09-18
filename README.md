@@ -1,9 +1,40 @@
 # Cassino
 
+## Start the browser table
+
+From this repository's folder, with Python 3.11+ and uv installed, run:
+
+```sh
+uv run python app.py
+```
+
+The command opens http://127.0.0.1:8000 in your browser. Keep the terminal
+open while playing; press Ctrl+C to stop. If the browser does not open,
+visit that address manually. If port 8000 is busy, use
+`uv run python app.py --port 8001`.
+
+Without uv, the table also runs with `python app.py` (no runtime dependencies).
+This is a Python-backed game: opening index.html directly or hosting it on
+GitHub Pages will not run the server.
+
+Click one or more cards in your hand, then table cards with an equal total,
+and choose the capture button. To place a card, select exactly one hand card
+and no table cards. The computer responds automatically. The Tip button
+selects a legal move without playing it. A whole deal finishes when all 52
+cards have been collected; the final score appears above the table.
+
+Choose Easy, Medium or Hard in the difficulty selector. Easy plays random
+legal moves; Medium prioritizes captures; Hard weighs card points and the
+capture opportunities left on the table using public information only.
+Changes apply to the next computer move without restarting the deal.
+
+The original assignment description and API follow below. The implementation
+is now in casino.py, with the browser server in app.py.
+
 The **Hungarian two-player version** of Cassino, with a 52-card French deck —
 in the browser, you against the computer.
 
-There is no code here yet. There are tests.
+The original tests are preserved unchanged in tests/test_casino.py.
 
 ## What to build
 

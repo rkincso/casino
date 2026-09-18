@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cassino — your table</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#102a28;color:#f9f2df;font:15px system-ui,sans-serif}main{max-width:1220px;margin:auto;padding:26px}header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #47605a;padding-bottom:20px}.logo{font:700 28px Georgia,serif}.gold{color:#edc888}.small{font-size:11px;letter-spacing:2px;color:#b4c4b8}h1{font:normal 44px Georgia,serif;margin:22px 0 8px}p{line-height:1.6;color:#c0cec5}.layout{display:grid;grid-template-columns:minmax(0,1fr) 285px;gap:24px}.table{background:radial-gradient(ellipse at center,#246653,#163f35);border:1px solid #668878;border-radius:24px;padding:26px;box-shadow:0 18px 40px #0003}.zone{min-height:132px}.cards{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;padding:20px 0}.card{width:72px;height:103px;border:2px solid #e6e2d3;border-radius:9px;background:#fff9eb;color:#22372f;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;padding:7px 9px;font:700 20px Georgia,serif;box-shadow:0 4px 7px #0004;cursor:pointer;transition:transform .12s}.card .suit{font-size:29px;align-self:center}.card .bottom{align-self:flex-end;font-size:13px}.card.red{color:#c34245}.card.selected{transform:translateY(-9px);outline:3px solid #efc984;border-color:#244e40;background:#fff1c9}.card:focus-visible,button:focus-visible{outline:3px solid #fff;outline-offset:4px}.back{background:repeating-linear-gradient(45deg,#244c62,#244c62 5px,#315c6f 5px,#315c6f 7px);border:4px solid #ece4d0;cursor:default;align-items:center;justify-content:center;color:#eacb92}.zone-label{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#d0dfd4;letter-spacing:1px}.divider{border-top:1px solid #ffffff26;margin:10px 0 20px}.empty{color:#b5cdbd;font-size:14px;padding:25px}.controls{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}button{font:600 14px system-ui,sans-serif;cursor:pointer}.btn{padding:12px 18px;border:1px solid #9b9a77;border-radius:9px;background:#efd29a;color:#18352c}.btn.secondary{background:transparent;color:#f4ead1;border-color:#6b8978}.btn:disabled{opacity:.45;cursor:default}.panel{border:1px solid #49645a;background:#193630;border-radius:15px;padding:20px;margin-bottom:16px}h2{font-size:17px;margin:0 0 16px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:14px}.num{font:32px Georgia,serif;color:#edc888}.meta{font-size:12px;color:#b4c4b8}.totals{font-size:14px;margin-top:8px;color:#f2d498;min-height:22px}.notice{min-height:45px;padding:12px 0;font-weight:500;color:#ffe1a1}.log{padding-left:18px;font-size:12px;color:#c0cec5;line-height:1.7;max-height:230px;overflow:auto}.rules{font-size:13px;line-height:1.7;color:#c0cec5}.result{border:1px solid #edc888;border-radius:12px;background:#243d30;padding:20px;margin-bottom:20px}.result[hidden]{display:none}footer{margin-top:20px;color:#9db6a6;font-size:12px}@media(max-width:850px){.layout{grid-template-columns:1fr}main{padding:16px}.table{padding:18px}h1{font-size:34px}.card{width:60px;height:88px}.cards{gap:8px}.small{letter-spacing:1px}aside{display:grid;grid-template-columns:1fr 1fr;gap:12px}.panel{margin:0}}@media(max-width:490px){aside{display:block}.panel{margin-top:12px}.card{width:54px;height:80px;font-size:17px;padding:5px}.card .suit{font-size:24px}header .small{display:none}}
+.deck-display{display:flex;align-items:center;justify-content:center;gap:22px;margin:4px 0 20px;padding:16px;background:#102f2880;border-radius:14px}.deck-stack{position:relative;width:49px;height:66px;border:3px solid #f0e6cb;border-radius:6px;background:repeating-linear-gradient(45deg,#244c62,#244c62 4px,#315c6f 4px,#315c6f 8px);box-shadow:4px 4px 0 #b5b09b,8px 8px 0 #e6dcc3;display:grid;place-items:center;color:#efd29a;font:28px Georgia}.deck-stack.exhausted{opacity:.3;box-shadow:none}.deck-display strong{display:block;font:18px Georgia;color:#edc888}.deck-display .meta{margin-top:4px}.dealt-card{position:fixed;z-index:20;pointer-events:none;margin:0}.deal-status{min-height:18px;margin-top:4px;color:#c0cec5;font-size:12px}@media(prefers-reduced-motion:reduce){.card{transition:none}}
+</style></head><body><main>
+<header><div class="logo">♠ Cassino<span class="gold">.</span></div><span class="small">HUNGARIAN RULES · 52 CARDS · YOU VS COMPUTER</span><button class="btn secondary" id="new">New deal</button></header>
+<h1>One table. Endless possibilities.</h1><p>Pick your cards, match the totals, and claim the points.</p>
+<div class="layout"><section class="table" aria-label="Card table">
+<div id="result" class="result" role="status" hidden></div>
+<div class="deck-display"><div id="deck" class="deck-stack" aria-hidden="true">♠</div><div><strong>The draw pile</strong><div class="meta">Three cards each. Your next chance.</div><div id="dealStatus" class="deal-status" role="status">Ready to deal</div></div></div>
+<div class="zone-label"><span>COMPUTER</span><span id="stock">Stock: —</span></div><div id="opponent" class="cards"></div>
+<div class="divider"></div><div class="zone-label"><span>THE TABLE</span><span>Select cards to capture</span></div><div id="table" class="cards zone"></div>
+<div class="divider"></div><div class="zone-label"><span>YOUR HAND</span><span id="turn">Loading…</span></div><div id="hand" class="cards"></div>
+<div id="totals" class="totals"></div><div class="controls"><button class="btn" id="play" disabled>Play move</button><button class="btn secondary" id="hint">Hint</button><button class="btn secondary" id="clear">Clear selection</button></div><div id="notice" class="notice" role="status" aria-live="polite"></div>
+</section><aside>
+<div class="panel"><h2><label for="difficulty">Computer difficulty</label></h2><select id="difficulty" class="btn" style="width:100%" aria-describedby="difficultyHelp" disabled><option value="easy">Easy · practice</option><option value="medium" selected>Medium · classic</option><option value="hard">Hard · tactical</option></select><p id="difficultyHelp" class="meta"></p><p class="meta">Switch any time. The next computer move uses the new level; your deal continues.</p></div>
+<div class="panel"><h2>This deal</h2><div class="stats"><div><div class="small">YOU</div><div class="num" id="yourPoints">0</div><div class="meta" id="yourStats"></div></div><div><div class="small">COMPUTER</div><div class="num" id="theirPoints">0</div><div class="meta" id="theirStats"></div></div></div><p class="meta">Scores are provisional during play. Majority bonuses can still change.</p></div>
+<div class="panel"><h2>How to play</h2><div class="rules">Select one or more cards from your hand, then table cards with the same total. For example <strong>5 + ace = 4 + 2</strong>.<br><br>Without a capture, place exactly one card. Ace = 1, J = 11, Q = 12, K = 13.<br><br>Clearing the table scores a sweep: +1 point. The next player places a card on the empty table, then moves again if they still have cards.<br><br>When both hands run out, the last capturer receives cards first and leads. At the end, they also collect the remaining table cards.</div></div>
+<div class="panel"><h2>Scoring</h2><div class="rules">At least 27 cards: <b>3 points</b><br>At least 7 spades: <b>2 points</b><br>Each ace: <b>1 point</b><br>10 of diamonds: <b>2 points</b> · 2 of spades: <b>1 point</b><br>Each sweep: <b>1 point</b></div></div>
+<div class="panel"><h2>Recent moves</h2><ol id="history" class="log"></ol></div>
+</aside></div><footer>Choose wisely. The next card could turn the tables.</footer>
+</main><script>
+const $=id=>document.getElementById(id),suits={S:'♠',H:'♥',D:'♦',C:'♣'},ranks=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+let state=null,busy=false,selectedHand=new Set(),selectedTable=new Set();
+const value=c=>ranks.indexOf(c.slice(0,-1))+1;
+const total=set=>[...set].reduce((n,c)=>n+value(c),0);
+const same=(list,set)=>list.length===set.size&&list.every(c=>set.has(c));
+function cardLabel(c){return c.slice(0,-1)+suits[c.slice(-1)]}
+async function request(path,body){const response=await fetch(path,body===undefined?{}:{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const data=await response.json();if(!response.ok)throw Error(data.error||'The request failed.');return data}
+function drawCards(id,cards,selected){const container=$(id);container.replaceChildren();if(!cards.length){const p=document.createElement('span');p.className='empty';p.textContent=id==='table'?'The table is empty.':'No cards left.';container.append(p)}for(const c of cards){const b=document.createElement('button');b.className='card'+('HD'.includes(c.slice(-1))?' red':'')+(selected.has(c)?' selected':'');b.setAttribute('aria-label',cardLabel(c)+', value: '+value(c));b.setAttribute('aria-pressed',selected.has(c));b.disabled=busy||state.over;b.innerHTML='<span>'+c.slice(0,-1)+'</span><span class="suit">'+suits[c.slice(-1)]+'</span><span class="bottom">'+value(c)+'</span>';b.onclick=()=>{selected.has(c)?selected.delete(c):selected.add(c);render();[...$(id).children][cards.indexOf(c)].focus()};container.append(b)}}
+function render(){drawCards('table',state.table,selectedTable);drawCards('hand',state.hand,selectedHand);$('opponent').replaceChildren();for(let i=0;i<state.opponent;i++){const back=document.createElement('div');back.className='card back';back.textContent='♠';back.setAttribute('aria-label','Computer face-down card');$('opponent').append(back)}$('stock').textContent='Stock: '+state.stock+' cards';$('yourPoints').textContent=state.points[0];$('theirPoints').textContent=state.points[1];$('yourStats').textContent=state.piles[0]+' cards · '+state.sweeps[0]+' sweeps';$('theirStats').textContent=state.piles[1]+' cards · '+state.sweeps[1]+' sweeps';$('turn').textContent=state.over?'Deal complete':busy?'Computer is playing…':'Your turn';$('totals').textContent='Hand total: '+total(selectedHand)+' / Table total: '+total(selectedTable);const valid=state.moves.some(m=>same(m.hand,selectedHand)&&same(m.table,selectedTable));$('play').disabled=busy||!valid||state.over;$('play').textContent=selectedTable.size?'Capture cards':'Place card';$('hint').disabled=busy||state.over;$('clear').disabled=busy||state.over;$('new').disabled=busy;$('history').replaceChildren();for(const line of state.history){const li=document.createElement('li');li.textContent=line.replace(/(10|[A2-9JQK])([SHDC])/g,(_,r,s)=>r+suits[s]);$('history').append(li)}$('result').hidden=!state.over;if(state.over){$('result').textContent=(state.points[0]>state.points[1]?'You win!':state.points[0]<state.points[1]?'Computer wins this time.':'A draw!')+' Final score: '+state.points[0]+' – '+state.points[1]+'. All 52 cards have been collected.'}$('notice').textContent=state.over?'Ready for another deal?':valid?(selectedTable.size?'Matching totals! You can capture the selected cards.':'You can place this card on the table.'):'Select a hand card. To capture, match the selected table total.'}
+const difficultyDescriptions={easy:'The computer picks random legal moves and may miss captures.',medium:'The computer looks for captures, sweeps, and valuable cards.',hard:'The computer weighs points and the opportunities left on the table. Your hand stays hidden.'};
+function renderDifficulty(){$('difficulty').value=state.difficulty;$('difficulty').disabled=busy;$('difficultyHelp').textContent=difficultyDescriptions[state.difficulty]}
+$('difficulty').onchange=()=>update('/api/difficulty',{difficulty:$('difficulty').value});
+async function animateDeal(opening){
+    $('deck').classList.toggle('exhausted',state.stock===0);
+    $('dealStatus').textContent=state.over?'Deal complete':state.stock+' cards in stock';
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    const targets=[...document.querySelectorAll('#opponent .card, #hand .card')];
+    if(opening)targets.push(...document.querySelectorAll('#table .card'));
+    const origin=$('deck').getBoundingClientRect();
+    const flights=[];
+    $('dealStatus').textContent='Dealing cards…';
+    try{
+        await Promise.all(targets.map(async(target,index)=>{
+            const end=target.getBoundingClientRect(),ghost=document.createElement('div');
+            ghost.className='card back dealt-card';ghost.textContent='♠';ghost.setAttribute('aria-hidden','true');
+            Object.assign(ghost.style,{left:origin.left+'px',top:origin.top+'px',width:end.width+'px',height:end.height+'px'});
+            target.style.visibility='hidden';document.body.append(ghost);flights.push(ghost);
+            await ghost.animate([{transform:'translate(0,0) rotate(-12deg) scale(.65)',opacity:0},{opacity:1,offset:.15},{transform:`translate(${end.left-origin.left}px,${end.top-origin.top}px) rotate(0deg) scale(1)`,opacity:1}],{duration:380,delay:index*65,easing:'ease-out',fill:'both'}).finished;
+            ghost.remove();target.style.visibility='';
+        }));
+    }finally{flights.forEach(c=>c.remove());targets.forEach(c=>c.style.visibility='');$('dealStatus').textContent=state.stock+' cards in stock'}
+}
+async function update(path,body){
+    if(busy)return;
+    const previous=state;busy=true;
+    if(state){render();renderDifficulty()}
+    try{
+        state=await request(path,body);
+        if(path!=='/api/difficulty'){selectedHand.clear();selectedTable.clear()}
+        const opening=!previous||path==='/api/new';
+        const dealt=opening||(previous&&state.stock<previous.stock);
+        render();renderDifficulty();
+        if(dealt&&!state.over)await animateDeal(opening);
+        busy=false;render();renderDifficulty();
+        $('deck').classList.toggle('exhausted',state.stock===0);
+        $('dealStatus').textContent=state.over?'Deal complete':state.stock+' cards in stock';
+        if(path==='/api/difficulty')$('notice').textContent='Difficulty updated for the next computer move.';
+    }catch(error){busy=false;if(state){render();renderDifficulty()}$('notice').textContent='Error: '+error.message+' Keep the server terminal open.'}
+}
+$('play').onclick=()=>update('/api/play',{hand:[...selectedHand],table:[...selectedTable]});$('new').onclick=()=>{if(state&&!state.over&&!confirm('Start a new deal? Your current progress will be lost.'))return;update('/api/new',{})};$('clear').onclick=()=>{selectedHand.clear();selectedTable.clear();render()};$('hint').onclick=()=>{const moves=[...state.moves].sort((a,b)=>b.table.length-a.table.length);const m=moves[0];if(m){selectedHand=new Set(m.hand);selectedTable=new Set(m.table);render();$('notice').textContent='Hint selected. Click Capture cards or Place card to play it.'}};
+if(location.protocol==='file:'){$('notice').textContent='Start this game from the casino folder with: uv run python app.py';$('hint').disabled=true}else{update('/api/state')}
+</script></body></html>
